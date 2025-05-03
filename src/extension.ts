@@ -29,10 +29,16 @@ export function activate(context: vscode.ExtensionContext): void {
     },
   );
 
-  // Replace onDidSaveTextDocument with onDidOpenTextDocument
+  // Handle onDidOpenTextDocument event
   vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
     extension.showOutputMessage(`File opened: ${document.fileName}`);
     extension.runCommands(document);
+  });
+
+  // Handle onDidChangeTextDocument event
+  vscode.workspace.onDidChangeTextDocument((event: vscode.TextDocumentChangeEvent) => {
+    extension.showOutputMessage(`File changed: ${event.document.fileName}`);
+    extension.runCommands(event.document);
   });
 
   // Keep notebook support but we're not modifying it as it's not mentioned in the issue
