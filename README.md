@@ -1,3 +1,48 @@
+# Run On Events (Fork of vscode-runonsave)
+
+> **This is a maintained fork of [`emeraldwalk/vscode-runonsave`](https://github.com/emeraldwalk/vscode-runonsave).**  
+> **[View this fork on GitHub](https://github.com/dmitriz/vscode-runonsave)**
+> 
+> The original extension executes commands when files are saved.  
+> This fork expands the functionality to support broader activation strategies — including repository state checks when VS Code launches.
+
+---
+
+## What's New in This Fork
+
+- Renamed the extension to `run-on-events` (internal ID)
+- Reset version to `0.0.1` to clearly mark the start of this fork
+- Preserves and extends `*` activation event to support startup behavior
+- New use case: check Git status (e.g., clean repo) immediately on launch
+- Legacy behavior (`onSave`) still supported, but fork allows generalization
+- Original configurations are preserved and will evolve in a backward-compatible way
+- More event types and scoped activation triggers are planned for future updates
+
+> **Note:** `*` activation is intentional and acknowledged.  
+> This extension is designed for startup checks and is throttled to avoid unnecessary performance impact.  
+> The schema warning (VS Code settings schema) can be safely ignored in this context.  
+> For more details on activation events, see the [VS Code documentation](https://code.visualstudio.com/api/references/activation-events).
+
+---
+
+## Long-Term Vision
+
+The goal of this fork is to create a versatile extension that supports a wide range of activation events and workflows, enabling developers to automate tasks based on various triggers beyond file saving.
+
+---
+
+## Original README (Historical Reference)
+
+### Click to expand
+
+### Historical Reference (Click to Expand)
+
+> The following documentation is inherited from the original `vscode-runonsave` project.  
+> While most of the configuration options and usage examples remain applicable,  
+> this fork may introduce broader functionality in future updates.  
+> Please refer to this section as a historical reference.  
+> The original README will remain static and will not be updated further.
+
 # Run On Save for Visual Studio Code
 
 This extension allows configuring commands that get run whenever a file is saved in vscode.
@@ -219,3 +264,5 @@ Commands support placeholders similar to tasks.json.
 ## License
 
 [Apache](https://github.com/emeraldwalk/vscode-runonsave/blob/master/LICENSE)
+
+### End of Historical Reference
