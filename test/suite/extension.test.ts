@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as os from 'os';
 
 suite('Extension Test Suite', () => {
   vscode.window.showInformationMessage('Starting Milestone 1 tests');
@@ -12,7 +13,9 @@ suite('Extension Test Suite', () => {
   test('Milestone 1: onDidOpenTextDocument is used instead of onDidSaveTextDocument', async () => {
     // This test verifies that the extension responds to file open events
     // Create a temporary file for testing
-    const workspaceFolderPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    const workspaceFolderPath = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0 
+      ? vscode.workspace.workspaceFolders[0].uri.fsPath 
+      : os.tmpdir();
     const testFilePath = path.join(workspaceFolderPath, 'test-open-file.txt');
     const uri = vscode.Uri.file(testFilePath);
     

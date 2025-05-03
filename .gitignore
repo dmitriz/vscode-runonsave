@@ -1,2 +1,22 @@
+# Exclude build output and dependencies
 out
 node_modules
+
+# Exclude logs and temporary files
+*.log
+temp/
+
+# Exclude VS Code settings and test artifacts
+.vscode/
+.vscode-test/
+
+# Exclude compiled TypeScript files
+*.js
+*.js.map
+
+# Exclude images and other assets
+images/*.png
+images/*.svg
+
+# Exclude scripts
+scripts/*.sh

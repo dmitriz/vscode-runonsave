@@ -34,7 +34,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test",
+    "test": "node ./.vscode-test/runTest.js",
     "package:latest": "npx vsce package -o releases/runonsave-latest.vsix"
   },
   "contributes": {
