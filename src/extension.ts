@@ -16,19 +16,16 @@ function isValidUri(uri: vscode.Uri): boolean {
 }
 
 export function activate(context: vscode.ExtensionContext): void {
-  const extension = new RunOnSaveExtension(context);
+  const extension = new RunOnEventsExtension(context);
   extension.showOutputMessage();
 
-  vscode.workspace.onDidChangeConfiguration(() => {
-    const disposeStatus = extension.showStatusMessage(
-      'Run On Save: Reloading config.',
-    );
-    extension.loadConfig();
-    disposeStatus.dispose();
-  });
-
-  registerEnableRunOnSave(context);
-  registerDisableRunOnSave(context);
+  // create status bar
+  const disposeStatus = extension.showStatusMessage('Loading configuration...');
+  extension.loadConfig();
+  disposeStatus.dispose();
+  
+  registerEnableRunOnEvents(context);
+  registerDisableRunOnEvents(context);
 
   function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): T {
     let timeout: NodeJS.Timeout | null = null;
@@ -75,16 +72,16 @@ export function activate(context: vscode.ExtensionContext): void {
 }
 
 /**
- * Register enable RunOnSave command.
+ * Register enable RunOnEvents command.
  */
-function registerEnableRunOnSave(
+function registerEnableRunOnEvents(
   context: vscode.ExtensionContext,
 ): void {
   const disposable = vscode.commands.registerCommand(
-    'extension.dmitriz.enableRunOnSave',
+    'extension.dmitriz.enableRunOnEvents',
     () => {
       isEnabled = true;
-      vscode.window.showInformationMessage('RunOnSave enabled.');
+      vscode.window.showInformationMessage('RunOnEvents enabled.');
     },
   );
 
@@ -92,22 +89,22 @@ function registerEnableRunOnSave(
 }
 
 /**
- * Register disable RunOnSave command.
+ * Register disable RunOnEvents command.
  */
-function registerDisableRunOnSave(
+function registerDisableRunOnEvents(
   context: vscode.ExtensionContext,
 ): void {
   const disposable = vscode.commands.registerCommand(
-    'extension.dmitriz.disableRunOnSave',
+    'extension.dmitriz.disableRunOnEvents',
     () => {
       isEnabled = false;
-      vscode.window.showInformationMessage('RunOnSave disabled.');
+      vscode.window.showInformationMessage('RunOnEvents disabled.');
     },
   );
   context.subscriptions.push(disposable);
 }
 
-class RunOnSaveExtension {
+class RunOnEventsExtension {
   private _outputChannel: vscode.OutputChannel;
   private _context: vscode.ExtensionContext;
   private _config: IConfig;
@@ -115,7 +112,7 @@ class RunOnSaveExtension {
 
   constructor(context: vscode.ExtensionContext) {
     this._context = context;
-    this._outputChannel = vscode.window.createOutputChannel('Run On Save');
+    this._outputChannel = vscode.window.createOutputChannel('Run On Events');
     this.loadConfig();
   }
 
@@ -267,7 +264,7 @@ class RunOnSaveExtension {
 
   public loadConfig(): void {
     this._config = <IConfig>(
-      (<any>vscode.workspace.getConfiguration('dmitriz.runonsave'))
+      (<any>vscode.workspace.getConfiguration('dmitriz.runonevents'))
     );
   }
 
@@ -276,7 +273,7 @@ class RunOnSaveExtension {
    */
   public showOutputMessage(message?: string): void {
     message =
-      message || `Run On Save ${this.isEnabled ? 'enabled' : 'disabled'}.`;
+      message || `Run On Events ${this.isEnabled ? 'enabled' : 'disabled'}.`;
     this._outputChannel.appendLine(message);
   }
 

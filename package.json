@@ -13,13 +13,13 @@
   },
   "publisher": "dmitriz",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/dmitriz/vscode-runonsave/blob/master/README.md",
+  "homepage": "https://github.com/dmitriz/vscode-runonevents/blob/master/README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dmitriz/vscode-runonsave.git"
+    "url": "https://github.com/dmitriz/vscode-runonevents.git"
   },
   "bugs": {
-    "url": "https://github.com/dmitriz/vscode-runonsave/issues"
+    "url": "https://github.com/dmitriz/vscode-runonevents/issues"
   },
   "categories": [
     "Other"
@@ -35,24 +35,24 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "node ./.vscode-test/runTest.js",
-    "package:latest": "npx vsce package -o releases/runonsave-latest.vsix"
+    "package:latest": "npx vsce package -o releases/runonevents-latest.vsix"
   },
   "contributes": {
     "commands": [
       {
-        "command": "extension.dmitriz.enableRunOnSave",
-        "title": "Run On Save: Enable"
+        "command": "extension.dmitriz.enableRunOnEvents",
+        "title": "Run On Events: Enable"
       },
       {
-        "command": "extension.dmitriz.disableRunOnSave",
-        "title": "Run On Save: Disable"
+        "command": "extension.dmitriz.disableRunOnEvents",
+        "title": "Run On Events: Disable"
       }
     ],
     "configuration": {
-      "title": "Run On Save command configuration.",
+      "title": "Run On Events command configuration.",
       "type": "object",
       "properties": {
-        "dmitriz.runonsave": {
+        "dmitriz.runonevents": {
           "type": "object",
           "properties": {
             "autoClearConsole": {

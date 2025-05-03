@@ -1,49 +1,57 @@
-# 📝 Extension Blueprint (vscode-runonsave)
+# 📝 Extension Blueprint (vscode-runonevents)
 
-## 🚀 Objective
+> 🧪 **Experimental Project**
+> This blueprint is experimental and subject to change.
 
-- 🔥 Fork `vscode-runonsave` (<https://github.com/emeraldwalk/vscode-runonsave>) to create a custom extension with minimal modifications.
-- 🔍 Replace the `onSave` trigger with `onDidOpenTextDocument` and `onDidChangeTextDocument` events.
-- 🔊 Implement throttling to prevent excessive task execution.
-- 🚀 Ensure the extension operates locally without publishing.
+- 🔥 Fork `vscode-runonevents` (<https://github.com/dmitriz/vscode-runonevents>) to create a custom extension with minimal modifications.
+- ♟️ Use webpack compressors in GitHub Actions and produce best optimizations
+- ❌ Remove run on changes that duplicate save
 
-## 📊 Functional Requirements
+## Specs
 
-- 📜 Listen to `onDidOpenTextDocument` and `onDidChangeTextDocument` events.
-- 🔊 Implement a throttling mechanism to limit task execution frequency.
-- 🔍 Execute a Git pull task when the events are triggered.
-- 🔊 Maintain the original extension's structure and naming conventions as much as possible.
-- 🛡️ Implement error handling for Git operations to gracefully manage failures.
-- 🛡️ Implement error handling for Git operations to gracefully manage failures.
-- 🛡️ Implement error handling for Git operations to gracefully manage failures.
-- 🛡️ Implement error handling for Git operations to gracefully manage failures.
-- 📢 Implement user notifications to inform about Git operations being performed.
+- This extension is based on [VS Code API](https://code.visualstudio.com/api/references/vscode-api).
+- It follows VS Code's extension development pattern.
 
-## 📋 Technical Plan
+## Features 
 
-- 📜 Fork the original repository and clone it locally.
-- 🔊 Modify the event listeners in the main extension file to use `onDidOpenTextDocument` and `onDidChangeTextDocument` instead of `onSave`.
-- 🔊 Implement a throttling function to prevent tasks from running too frequently.
-- 🔊 Ensure the Git pull task is executed asynchronously to avoid blocking the extension during event handling.
-- 🔊 Add configuration options for customizing throttling parameters and Git commands.
-- 🔊 Test the extension locally to verify functionality.
+This extension runs commands when events occur in VS Code (file opened, saved, or content changed).
 
-## 📜 Installation Instructions
+### Configuration
 
-1. 📜 Clone the forked repository to your local machine.
-2. 🔊 Open the repository in VS Code.
-3. 🔊 Run the extension in development mode by pressing F5.
-4. 🔊 Test the extension to ensure it functions as expected.
-5. 🔊 Package the extension using `vsce` and install it locally if desired.
+A full configuration has the following structure:
 
-## 📜 Additional Considerations
+```json
+{
+  "dmitriz.runonevents": {
+    "autoClearConsole": true,
+    "shell": "/bin/bash",
+    "commands": [
+      {
+        "match": ".*\\.txt$",
+        "notMatch": "node_modules",
+        "cmd": "echo 'Hello ${file}'",
+        "isAsync": true
+      }
+    ],
+    "message": "Run command for ${file}",
+    "messageAfter": "Command finished for ${file}",
+    "showElapsed": true
+  }
+}
+```
 
-- 🔊 Maintain the original extension's structure to simplify future updates from the upstream repository.
-- 🔊 Document any changes made to the original code for clarity.
-- 🔊 Consider contributing back to the original repository if the changes are beneficial to others.
-- 📊 Implement performance monitoring to track extension behavior and optimize throttling parameters.
-- 🔊 Consider contributing back to the original repository if the changes are beneficial to others.
+## Tasks
 
-## Prerequisites
+- Run Tests
+  - `npm test`
 
-- 🔥 Fork `vscode-runonsave` (<https://github.com/dmitriz/vscode-runonsave>) to create a custom extension with minimal modifications.
+## Next steps
+
+- 🔥 Fork `vscode-runonevents` (<https://github.com/dmitriz/vscode-runonevents>) to create a custom extension with minimal modifications.
+- ♟️ Make it better than the original with modern techniques and tools.
+
+## Other ideas
+
+- Throttling to prevent running commands too frequently on changes
+- Support for Pattern Lab and other static site generators
+- Add more event types beyond save and open
