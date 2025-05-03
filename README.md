@@ -19,7 +19,14 @@
 
 > **Note:** `"*"` activation is intentional and acknowledged.  
 > This extension is designed for startup checks and is throttled to avoid unnecessary performance impact.  
-> The schema warning can be safely ignored in this context.
+> The schema warning can be safely ignored in this context.  
+> For more details on activation events, see the [VS Code documentation](https://code.visualstudio.com/api/references/activation-events).
+
+---
+
+## Long-Term Vision
+
+The goal of this fork is to create a versatile extension that supports a wide range of activation events and workflows, enabling developers to automate tasks based on various triggers beyond file saving.
 
 ---
 
@@ -28,7 +35,8 @@
 > The following documentation is inherited from the original `vscode-runonsave` project.  
 > While most of the configuration options and usage examples remain applicable,  
 > this fork may introduce broader functionality in future updates.  
-> Please refer to this section as a historical reference.
+> Please refer to this section as a historical reference.  
+> The original README will remain static and will not be updated further.
 
 # Run On Save for Visual Studio Code
 
