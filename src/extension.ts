@@ -3,6 +3,9 @@ import * as path from 'path';
 import { exec } from 'child_process';
 import type { ICommand, IConfig, IExecResult, Document } from './model';
 
+// Define isEnabled at the top level
+let isEnabled = true;
+
 function isValidUri(uri: vscode.Uri): boolean {
   try {
     // Ensure the URI is valid and points to a file
@@ -24,31 +27,17 @@ export function activate(context: vscode.ExtensionContext): void {
     disposeStatus.dispose();
   });
 
-  vscode.commands.registerCommand(
-    'extension.emeraldwalk.enableRunOnSave',
-    () => {
-      extension.isEnabled = true;
-    },
-  );
-
-  vscode.commands.registerCommand(
-    'extension.emeraldwalk.disableRunOnSave',
-    () => {
-      extension.isEnabled = false;
-    },
-  );
+  registerEnableRunOnSave(context);
+  registerDisableRunOnSave(context);
 
   function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): T {
     let timeout: NodeJS.Timeout | null = null;
     return ((...args: any[]) => {
-      // Keep notebook support but we're not modifying it as it's not mentioned in the issue
-      const notebookSubscription = vscode.workspace.onDidSaveNotebookDocument((document: vscode.NotebookDocument) => {
-        extension.runCommands(document);
-      });
-      context.subscriptions.push(notebookSubscription);
-        } catch (error) {
-          console.error('Error executing debounced function:', error);
-        }
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(() => {
+        fn(...args);
       }, delay);
     }) as T;
   }
@@ -83,6 +72,39 @@ export function activate(context: vscode.ExtensionContext): void {
   vscode.workspace.onDidSaveNotebookDocument((document: vscode.NotebookDocument) => {
     extension.runCommands(document);
   });
+}
+
+/**
+ * Register enable RunOnSave command.
+ */
+function registerEnableRunOnSave(
+  context: vscode.ExtensionContext,
+): void {
+  const disposable = vscode.commands.registerCommand(
+    'extension.dmitriz.enableRunOnSave',
+    () => {
+      isEnabled = true;
+      vscode.window.showInformationMessage('RunOnSave enabled.');
+    },
+  );
+
+  context.subscriptions.push(disposable);
+}
+
+/**
+ * Register disable RunOnSave command.
+ */
+function registerDisableRunOnSave(
+  context: vscode.ExtensionContext,
+): void {
+  const disposable = vscode.commands.registerCommand(
+    'extension.dmitriz.disableRunOnSave',
+    () => {
+      isEnabled = false;
+      vscode.window.showInformationMessage('RunOnSave disabled.');
+    },
+  );
+  context.subscriptions.push(disposable);
 }
 
 class RunOnSaveExtension {
@@ -245,7 +267,7 @@ class RunOnSaveExtension {
 
   public loadConfig(): void {
     this._config = <IConfig>(
-      (<any>vscode.workspace.getConfiguration('emeraldwalk.runonsave'))
+      (<any>vscode.workspace.getConfiguration('dmitriz.runonsave'))
     );
   }
 

@@ -43,3 +43,7 @@
 - 🔊 Consider contributing back to the original repository if the changes are beneficial to others.
 - 📊 Implement performance monitoring to track extension behavior and optimize throttling parameters.
 - 🔊 Consider contributing back to the original repository if the changes are beneficial to others.
+
+## Prerequisites
+
+- 🔥 Fork `vscode-runonsave` (<https://github.com/dmitriz/vscode-runonsave>) to create a custom extension with minimal modifications.

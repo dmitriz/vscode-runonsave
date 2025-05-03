@@ -1,6 +1,6 @@
 {
   "name": "run-on-events",
-  "displayName": "Run on Save",
+  "displayName": "Run on Events",
   "description": "Run commands when a file is saved in vscode.",
   "icon": "images/save-icon.png",
   "galleryBanner": {
@@ -11,15 +11,15 @@
   "engines": {
     "vscode": "^1.86.0"
   },
-  "publisher": "emeraldwalk",
+  "publisher": "dmitriz",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/emeraldwalk/vscode-runonsave/blob/master/README.md",
+  "homepage": "https://github.com/dmitriz/vscode-runonsave/blob/master/README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/emeraldwalk/vscode-runonsave.git"
+    "url": "https://github.com/dmitriz/vscode-runonsave.git"
   },
   "bugs": {
-    "url": "https://github.com/emeraldwalk/vscode-runonsave/issues"
+    "url": "https://github.com/dmitriz/vscode-runonsave/issues"
   },
   "categories": [
     "Other"
@@ -40,11 +40,11 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.emeraldwalk.enableRunOnSave",
+        "command": "extension.dmitriz.enableRunOnSave",
         "title": "Run On Save: Enable"
       },
       {
-        "command": "extension.emeraldwalk.disableRunOnSave",
+        "command": "extension.dmitriz.disableRunOnSave",
         "title": "Run On Save: Disable"
       }
     ],
@@ -52,7 +52,7 @@
       "title": "Run On Save command configuration.",
       "type": "object",
       "properties": {
-        "emeraldwalk.runonsave": {
+        "dmitriz.runonsave": {
           "type": "object",
           "properties": {
             "autoClearConsole": {

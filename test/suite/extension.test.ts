@@ -7,7 +7,7 @@ suite('Extension Test Suite', () => {
   vscode.window.showInformationMessage('Starting Milestone 1 tests');
 
   test('Extension should be present', () => {
-    assert.ok(vscode.extensions.getExtension('emeraldwalk.run-on-events'));
+    assert.ok(vscode.extensions.getExtension('dmitriz.run-on-events'));
   });
 
   test('Milestone 1: onDidOpenTextDocument is used instead of onDidSaveTextDocument', async function() {

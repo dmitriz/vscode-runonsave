@@ -2,10 +2,12 @@
 Summarize changes this PR introduces.
 
 ## Testing
-```jsonc
+```json
 {
-  "emeraldwalk.runonsave": {
-    // Example settings.json to Test Changes
+  "dmitriz.runonsave": {
+    "commands": [
+      // ... commands configuration
+    ]
   }
 }
 ```

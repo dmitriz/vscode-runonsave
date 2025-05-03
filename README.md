@@ -1,6 +1,6 @@
 # Run On Events (Fork of vscode-runonsave)
 
-> **This is a maintained fork of [`emeraldwalk/vscode-runonsave`](https://github.com/emeraldwalk/vscode-runonsave).**  
+> **This is a maintained fork of [`dmitriz/vscode-runonsave`](https://github.com/dmitriz/vscode-runonsave).**  
 > **[View this fork on GitHub](https://github.com/dmitriz/vscode-runonsave)**
 > 
 > The original extension executes commands when files are saved.  
@@ -57,7 +57,7 @@ NOTE: Commands only get run when saving an existing file. Creating new files, an
 
 ## Configuration
 
-Add "emeraldwalk.runonsave" configuration to user or workspace settings.
+Add "dmitriz.runonsave" configuration to user or workspace settings.
 
 - `shell` - (optional) shell path to be used with child_process.exec options that runs commands.
 - `autoClearConsole` - (optional) clear VSCode output console every time commands run. Defaults to false.
@@ -96,7 +96,7 @@ The `match` and `notMatch` options expect RegEx patterns.
 
 ```jsonc
 {
-  "emeraldwalk.runonsave": {
+  "dmitriz.runonsave": {
     "commands": [
       {
         // Run whenever any file is saved
@@ -112,7 +112,7 @@ The `match` and `notMatch` options expect RegEx patterns.
 
 ```jsonc
 {
-  "emeraldwalk.runonsave": {
+  "dmitriz.runonsave": {
     "commands": [
       {
         // Run whenever html, css, or js files are saved
@@ -128,7 +128,7 @@ The `match` and `notMatch` options expect RegEx patterns.
 
 ```jsonc
 {
-  "emeraldwalk.runonsave": {
+  "dmitriz.runonsave": {
     "commands": [
       {
         // Match all html, css, and js files
@@ -146,7 +146,7 @@ The `match` and `notMatch` options expect RegEx patterns.
 
 ```jsonc
 {
-  "emeraldwalk.runonsave": {
+  "dmitriz.runonsave": {
     "commands": [
       {
         // Match all .json files except for ones in
@@ -164,7 +164,7 @@ The `match` and `notMatch` options expect RegEx patterns.
 
 ```jsonc
 {
-  "emeraldwalk.runonsave": {
+  "dmitriz.runonsave": {
     "commands": [
       {
         "match": ".*",
@@ -194,7 +194,7 @@ The `match` and `notMatch` options expect RegEx patterns.
 
 ```jsonc
 {
-  "emeraldwalk.runonsave": {
+  "dmitriz.runonsave": {
     // Messages to show before & after all commands
     "message": "*** All Start ***",
     "messageAfter": "*** All Complete ***",
@@ -258,11 +258,11 @@ Commands support placeholders similar to tasks.json.
 
 ## Links
 
-- [Marketplace](https://marketplace.visualstudio.com/items/emeraldwalk.RunOnSave)
-- [Source Code](https://github.com/emeraldwalk/vscode-runonsave)
+- [Marketplace](https://marketplace.visualstudio.com/items/dmitriz.RunOnSave)
+- [Source Code](https://github.com/dmitriz/vscode-runonsave)
 
 ## License
 
-[Apache](https://github.com/emeraldwalk/vscode-runonsave/blob/master/LICENSE)
+[Apache](https://github.com/dmitriz/vscode-runonsave/blob/master/LICENSE)
 
 ### End of Historical Reference
