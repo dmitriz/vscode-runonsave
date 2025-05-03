@@ -2,7 +2,7 @@
 
 ## 🚀 Objective
 
-- 🔥 Fork `vscode-runonsave` (https://github.com/emeraldwalk/vscode-runonsave) to create a custom extension with minimal modifications.
+- 🔥 Fork `vscode-runonsave` (<https://github.com/emeraldwalk/vscode-runonsave>) to create a custom extension with minimal modifications.
 - 🔍 Replace the `onSave` trigger with `onDidOpenTextDocument` and `onDidChangeTextDocument` events.
 - 🔊 Implement throttling to prevent excessive task execution.
 - 🚀 Ensure the extension operates locally without publishing.
@@ -35,6 +35,7 @@
 3. 🔊 Run the extension in development mode by pressing F5.
 4. 🔊 Test the extension to ensure it functions as expected.
 5. 🔊 Package the extension using `vsce` and install it locally if desired.
+
 ## 📜 Additional Considerations
 
 - 🔊 Maintain the original extension's structure to simplify future updates from the upstream repository.
