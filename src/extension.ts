@@ -3,50 +3,130 @@ import * as path from 'path';
 import { exec } from 'child_process';
 import type { ICommand, IConfig, IExecResult, Document } from './model';
 
+// Define isEnabled at the top level
+let isEnabled = true;
+
+function isValidUri(uri: vscode.Uri): boolean {
+  try {
+    // Ensure the URI is valid and points to a file
+    return uri.scheme === 'file' && !!uri.fsPath;
+  } catch {
+    return false;
+  }
+}
+
 export function activate(context: vscode.ExtensionContext): void {
-  const extension = new RunOnSaveExtension(context);
+  const extension = new RunOnEventsExtension(context);
   extension.showOutputMessage();
 
-  vscode.workspace.onDidChangeConfiguration(() => {
-    const disposeStatus = extension.showStatusMessage(
-      'Run On Save: Reloading config.',
-    );
-    extension.loadConfig();
-    disposeStatus.dispose();
+  // create status bar
+  const disposeStatus = extension.showStatusMessage('Loading configuration...');
+  extension.loadConfig();
+  disposeStatus.dispose();
+  
+  registerEnableRunOnEvents(context);
+  registerDisableRunOnEvents(context);
+
+  function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): T {
+    let timeout: NodeJS.Timeout | null = null;
+    return ((...args: any[]) => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(() => {
+        fn(...args);
+      }, delay);
+    }) as T;
+  }
+
+  const debouncedRunCommands = debounce(async (document: vscode.TextDocument) => {
+    try {
+      await extension.runCommands(document);
+    } catch (error) {
+      console.error('Error executing runCommands:', error);
+    }
+  }, 300);
+
+  // Handle onDidOpenTextDocument event with debouncing and error handling
+  vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
+    extension.showOutputMessage(`File opened: ${document.fileName}`);
+    debouncedRunCommands(document);
   });
 
-  vscode.commands.registerCommand(
-    'extension.emeraldwalk.enableRunOnSave',
-    () => {
-      extension.isEnabled = true;
-    },
-  );
-
-  vscode.commands.registerCommand(
-    'extension.emeraldwalk.disableRunOnSave',
-    () => {
-      extension.isEnabled = false;
-    },
-  );
-
+  // Handle onDidSaveTextDocument event with debouncing and error handling
   vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-    extension.runCommands(document);
+    extension.showOutputMessage(`File saved: ${document.fileName}`);
+    debouncedRunCommands(document);
   });
 
+  // Handle onDidChangeTextDocument event with debouncing and error handling
+  vscode.workspace.onDidChangeTextDocument((event: vscode.TextDocumentChangeEvent) => {
+    extension.showOutputMessage(`File changed: ${event.document.fileName}`);
+    debouncedRunCommands(event.document);
+  });
+
+  // Keep notebook support but we're not modifying it as it's not mentioned in the issue
   vscode.workspace.onDidSaveNotebookDocument((document: vscode.NotebookDocument) => {
     extension.runCommands(document);
   });
 }
 
-class RunOnSaveExtension {
+/**
+ * Register enable RunOnEvents command.
+ */
+function registerEnableRunOnEvents(
+  context: vscode.ExtensionContext,
+): void {
+  const disposable = vscode.commands.registerCommand(
+    'extension.dmitriz.enableRunOnEvents',
+    () => {
+      isEnabled = true;
+      vscode.window.showInformationMessage('RunOnEvents enabled.');
+    },
+  );
+
+  context.subscriptions.push(disposable);
+}
+
+/**
+ * Register disable RunOnEvents command.
+ */
+function registerDisableRunOnEvents(
+  context: vscode.ExtensionContext,
+): void {
+  const disposable = vscode.commands.registerCommand(
+    'extension.dmitriz.disableRunOnEvents',
+    () => {
+      isEnabled = false;
+      vscode.window.showInformationMessage('RunOnEvents disabled.');
+    },
+  );
+  context.subscriptions.push(disposable);
+}
+
+class RunOnEventsExtension {
   private _outputChannel: vscode.OutputChannel;
   private _context: vscode.ExtensionContext;
   private _config: IConfig;
+  private _stateLock: Promise<void> = Promise.resolve();
 
   constructor(context: vscode.ExtensionContext) {
     this._context = context;
-    this._outputChannel = vscode.window.createOutputChannel('Run On Save');
+    this._outputChannel = vscode.window.createOutputChannel('Run On Events');
     this.loadConfig();
+  }
+
+  private async _withLock<T>(fn: () => Promise<T>): Promise<T> {
+    const release = this._stateLock;
+    let resolveLock: () => void;
+    this._stateLock = new Promise((resolve) => (resolveLock = resolve));
+
+    try {
+      await release;
+      return await fn();
+    } finally {
+      resolveLock();
+    }
   }
 
   /** Recursive call to run commands. */
@@ -184,7 +264,7 @@ class RunOnSaveExtension {
 
   public loadConfig(): void {
     this._config = <IConfig>(
-      (<any>vscode.workspace.getConfiguration('emeraldwalk.runonsave'))
+      (<any>vscode.workspace.getConfiguration('dmitriz.runonevents'))
     );
   }
 
@@ -193,7 +273,7 @@ class RunOnSaveExtension {
    */
   public showOutputMessage(message?: string): void {
     message =
-      message || `Run On Save ${this.isEnabled ? 'enabled' : 'disabled'}.`;
+      message || `Run On Events ${this.isEnabled ? 'enabled' : 'disabled'}.`;
     this._outputChannel.appendLine(message);
   }
 
@@ -217,13 +297,19 @@ class RunOnSaveExtension {
     return vscode.window.setStatusBarMessage(message);
   }
 
-  public runCommands(document: Document): void {
+  public async runCommands(document: Document): Promise<void> {
     if (this.autoClearConsole) {
       this._outputChannel.clear();
     }
 
     if (!this.isEnabled || this.commands.length === 0) {
       this.showOutputMessage();
+      return;
+    }
+
+    const validatedUri = isValidUri(document.uri);
+    if (!validatedUri) {
+      console.error('Invalid document URI:', document.uri);
       return;
     }
 
@@ -236,13 +322,9 @@ class RunOnSaveExtension {
       const matchPattern = cfg.match || '';
       const negatePattern = cfg.notMatch || '';
 
-      // if no match pattern was provided, or if match pattern succeeds
       const isMatch = matchPattern.length === 0 || match(matchPattern);
-
-      // negation has to be explicitly provided
       const isNegate = negatePattern.length > 0 && match(negatePattern);
 
-      // negation wins over match
       return !isNegate && isMatch;
     });
 
@@ -250,61 +332,57 @@ class RunOnSaveExtension {
       return;
     }
 
-    // build our commands by replacing parameters with values
-    const commands: Array<ICommand> = [];
-    for (const cfg of commandConfigs) {
-      let cmdStr = cfg.cmd;
+    await this._withLock(async () => {
+      const commands: Array<ICommand> = [];
+      for (const cfg of commandConfigs) {
+        let cmdStr = cfg.cmd;
 
-      const extName = path.extname(document.uri.fsPath);
-      const workspaceFolderPath = this._getWorkspaceFolderPath(document.uri);
-      const relativeFile = path.relative(
-        workspaceFolderPath,
-        document.uri.fsPath,
-      );
-
-      if (cmdStr) {
-        cmdStr = cmdStr.replace(/\${file}/g, `${document.uri.fsPath}`);
-
-        // DEPRECATED: workspaceFolder is more inline with vscode variables,
-        // but leaving old version in place for any users already using it.
-        cmdStr = cmdStr.replace(/\${workspaceRoot}/g, workspaceFolderPath);
-
-        cmdStr = cmdStr.replace(/\${workspaceFolder}/g, workspaceFolderPath);
-        cmdStr = cmdStr.replace(
-          /\${fileBasename}/g,
-          path.basename(document.uri.fsPath),
+        const extName = path.extname(document.uri.fsPath);
+        const workspaceFolderPath = this._getWorkspaceFolderPath(document.uri);
+        const relativeFile = path.relative(
+          workspaceFolderPath,
+          document.uri.fsPath,
         );
-        cmdStr = cmdStr.replace(
-          /\${fileDirname}/g,
-          path.dirname(document.uri.fsPath),
-        );
-        cmdStr = cmdStr.replace(/\${fileExtname}/g, extName);
-        cmdStr = cmdStr.replace(
-          /\${fileBasenameNoExt}/g,
-          path.basename(document.uri.fsPath, extName),
-        );
-        cmdStr = cmdStr.replace(/\${relativeFile}/g, relativeFile);
-        cmdStr = cmdStr.replace(/\${cwd}/g, process.cwd());
 
-        // replace environment variables ${env.Name}
-        cmdStr = cmdStr.replace(
-          /\${env\.([^}]+)}/g,
-          (sub: string, envName: string) => {
-            return process.env[envName];
-          },
-        );
+        if (cmdStr) {
+          cmdStr = cmdStr.replace(/\${file}/g, `${document.uri.fsPath}`);
+          cmdStr = cmdStr.replace(/\${workspaceRoot}/g, workspaceFolderPath);
+          cmdStr = cmdStr.replace(/\${workspaceFolder}/g, workspaceFolderPath);
+          cmdStr = cmdStr.replace(
+            /\${fileBasename}/g,
+            path.basename(document.uri.fsPath),
+          );
+          cmdStr = cmdStr.replace(
+            /\${fileDirname}/g,
+            path.dirname(document.uri.fsPath),
+          );
+          cmdStr = cmdStr.replace(/\${fileExtname}/g, extName);
+          cmdStr = cmdStr.replace(
+            /\${fileBasenameNoExt}/g,
+            path.basename(document.uri.fsPath, extName),
+          );
+          cmdStr = cmdStr.replace(/\${relativeFile}/g, relativeFile);
+          cmdStr = cmdStr.replace(/\${cwd}/g, process.cwd());
+
+          cmdStr = cmdStr.replace(
+            /\${env\.([^}]+)}/g,
+            (sub: string, envName: string) => {
+              return process.env[envName];
+            },
+          );
+        }
+
+        commands.push({
+          message: cfg.message,
+          messageAfter: cfg.messageAfter,
+          cmd: cmdStr,
+          isAsync: !!cfg.isAsync,
+          showElapsed: cfg.showElapsed,
+          autoShowOutputPanel: cfg.autoShowOutputPanel,
+        });
       }
 
-      commands.push({
-        message: cfg.message,
-        messageAfter: cfg.messageAfter,
-        cmd: cmdStr,
-        isAsync: !!cfg.isAsync,
-        showElapsed: cfg.showElapsed,
-        autoShowOutputPanel: cfg.autoShowOutputPanel,
-      });
-    }
-
-    this._runCommands(commands, document);
+      await this._runCommands(commands, document);
+    });
   }
 }

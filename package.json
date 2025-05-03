@@ -1,6 +1,6 @@
 {
   "name": "run-on-events",
-  "displayName": "Run on Save",
+  "displayName": "Run on Events",
   "description": "Run commands when a file is saved in vscode.",
   "icon": "images/save-icon.png",
   "galleryBanner": {
@@ -11,15 +11,15 @@
   "engines": {
     "vscode": "^1.86.0"
   },
-  "publisher": "emeraldwalk",
+  "publisher": "dmitriz",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/emeraldwalk/vscode-runonsave/blob/master/README.md",
+  "homepage": "https://github.com/dmitriz/vscode-runonevents/blob/master/README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/emeraldwalk/vscode-runonsave.git"
+    "url": "https://github.com/dmitriz/vscode-runonevents.git"
   },
   "bugs": {
-    "url": "https://github.com/emeraldwalk/vscode-runonsave/issues"
+    "url": "https://github.com/dmitriz/vscode-runonevents/issues"
   },
   "categories": [
     "Other"
@@ -34,25 +34,25 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test",
-    "package:latest": "npx vsce package -o releases/runonsave-latest.vsix"
+    "test": "node ./.vscode-test/runTest.js",
+    "package:latest": "npx vsce package -o releases/runonevents-latest.vsix"
   },
   "contributes": {
     "commands": [
       {
-        "command": "extension.emeraldwalk.enableRunOnSave",
-        "title": "Run On Save: Enable"
+        "command": "extension.dmitriz.enableRunOnEvents",
+        "title": "Run On Events: Enable"
       },
       {
-        "command": "extension.emeraldwalk.disableRunOnSave",
-        "title": "Run On Save: Disable"
+        "command": "extension.dmitriz.disableRunOnEvents",
+        "title": "Run On Events: Disable"
       }
     ],
     "configuration": {
-      "title": "Run On Save command configuration.",
+      "title": "Run On Events command configuration.",
       "type": "object",
       "properties": {
-        "emeraldwalk.runonsave": {
+        "dmitriz.runonevents": {
           "type": "object",
           "properties": {
             "autoClearConsole": {
@@ -133,14 +133,22 @@
     }
   },
   "devDependencies": {
-    "@types/vscode": "^1.86.0",
-    "@types/mocha": "^10.0.8",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.10",
     "@types/node": "22.7.4",
+    "@types/vscode": "^1.86.0",
     "@typescript-eslint/eslint-plugin": "^8.7.0",
     "@typescript-eslint/parser": "^8.7.0",
-    "eslint": "^9.11.1",
-    "typescript": "^5.6.2",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.11.1",
+    "glob": "^11.0.2",
+    "mocha": "^11.2.2",
+    "sinon": "^20.0.0",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "glob": "^10.4.5",
+    "minimatch": "^5.0.0"
   }
 }
