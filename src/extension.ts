@@ -29,16 +29,32 @@ export function activate(context: vscode.ExtensionContext): void {
     },
   );
 
-  // Handle onDidOpenTextDocument event
+  function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): T {
+    let timeout: NodeJS.Timeout | null = null;
+    return ((...args: any[]) => {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        try {
+          fn(...args);
+        } catch (error) {
+          console.error('Error executing runCommands:', error);
+        }
+      }, delay);
+    }) as T;
+  }
+
+  const debouncedRunCommands = debounce(extension.runCommands, 300);
+
+  // Handle onDidOpenTextDocument event with debouncing and error handling
   vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
     extension.showOutputMessage(`File opened: ${document.fileName}`);
-    extension.runCommands(document);
+    debouncedRunCommands(document);
   });
 
-  // Handle onDidChangeTextDocument event
+  // Handle onDidChangeTextDocument event with debouncing and error handling
   vscode.workspace.onDidChangeTextDocument((event: vscode.TextDocumentChangeEvent) => {
     extension.showOutputMessage(`File changed: ${event.document.fileName}`);
-    extension.runCommands(event.document);
+    debouncedRunCommands(event.document);
   });
 
   // Keep notebook support but we're not modifying it as it's not mentioned in the issue
