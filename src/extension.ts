@@ -33,17 +33,23 @@ export function activate(context: vscode.ExtensionContext): void {
     let timeout: NodeJS.Timeout | null = null;
     return ((...args: any[]) => {
       if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => {
+      timeout = setTimeout(async () => {
         try {
-          fn(...args);
+          await fn(...args);
         } catch (error) {
-          console.error('Error executing runCommands:', error);
+          console.error('Error executing debounced function:', error);
         }
       }, delay);
     }) as T;
   }
 
-  const debouncedRunCommands = debounce(extension.runCommands, 300);
+  const debouncedRunCommands = debounce(async (document: vscode.TextDocument) => {
+    try {
+      await extension.runCommands(document);
+    } catch (error) {
+      console.error('Error executing runCommands:', error);
+    }
+  }, 300);
 
   // Handle onDidOpenTextDocument event with debouncing and error handling
   vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
