@@ -1,6 +1,7 @@
 # Run On Events (Fork of vscode-runonsave)
 
-> **This is a maintained fork of [`emeraldwalk/vscode-runonsave`](https://github.com/emeraldwalk/vscode-runonsave).**
+> **This is a maintained fork of [`emeraldwalk/vscode-runonsave`](https://github.com/emeraldwalk/vscode-runonsave).**  
+> **[View this fork on GitHub](https://github.com/dmitriz/vscode-runonsave)**
 > 
 > The original extension executes commands when files are saved.  
 > This fork expands the functionality to support broader activation strategies — including repository state checks when VS Code launches.
@@ -11,15 +12,15 @@
 
 - Renamed the extension to `run-on-events` (internal ID)
 - Reset version to `0.0.1` to clearly mark the start of this fork
-- Preserves and extends `"*"` activation event to support startup behavior
+- Preserves and extends `*` activation event to support startup behavior
 - New use case: check Git status (e.g., clean repo) immediately on launch
 - Legacy behavior (`onSave`) still supported, but fork allows generalization
 - Original configurations are preserved and will evolve in a backward-compatible way
 - More event types and scoped activation triggers are planned for future updates
 
-> **Note:** `"*"` activation is intentional and acknowledged.  
+> **Note:** `*` activation is intentional and acknowledged.  
 > This extension is designed for startup checks and is throttled to avoid unnecessary performance impact.  
-> The schema warning can be safely ignored in this context.  
+> The schema warning (VS Code settings schema) can be safely ignored in this context.  
 > For more details on activation events, see the [VS Code documentation](https://code.visualstudio.com/api/references/activation-events).
 
 ---
@@ -30,7 +31,11 @@ The goal of this fork is to create a versatile extension that supports a wide ra
 
 ---
 
-## Original README (Preserved Below)
+## Original README (Historical Reference)
+
+### Click to expand
+
+### Historical Reference (Click to Expand)
 
 > The following documentation is inherited from the original `vscode-runonsave` project.  
 > While most of the configuration options and usage examples remain applicable,  
@@ -259,3 +264,5 @@ Commands support placeholders similar to tasks.json.
 ## License
 
 [Apache](https://github.com/emeraldwalk/vscode-runonsave/blob/master/LICENSE)
+
+### End of Historical Reference
