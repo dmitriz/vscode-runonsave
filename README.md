@@ -162,15 +162,15 @@ The `match` and `notMatch` options expect RegEx patterns.
       },
       {
         "match": "\\.txt$",
-        "cmd": "echo 'I am a .txt file ${file}."'
+        "cmd": "echo 'I am a .txt file ${file}.'"
       },
       {
         "match": "\\.js$",
-        "cmd": "echo 'I am a .js file ${file}."'
+        "cmd": "echo 'I am a .js file ${file}.'"
       },
       {
         "match": ".*",
-        "cmd": "echo 'I am ${env.USERNAME}."'
+        "cmd": "echo 'I am ${env.USERNAME}.'"
       }
     ]
   }
