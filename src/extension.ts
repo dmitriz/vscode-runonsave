@@ -41,10 +41,11 @@ export function activate(context: vscode.ExtensionContext): void {
   function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): T {
     let timeout: NodeJS.Timeout | null = null;
     return ((...args: any[]) => {
-      if (timeout) {clearTimeout(timeout);}
-      timeout = setTimeout(async () => {
-        try {
-          await fn(...args);
+      // Keep notebook support but we're not modifying it as it's not mentioned in the issue
+      const notebookSubscription = vscode.workspace.onDidSaveNotebookDocument((document: vscode.NotebookDocument) => {
+        extension.runCommands(document);
+      });
+      context.subscriptions.push(notebookSubscription);
         } catch (error) {
           console.error('Error executing debounced function:', error);
         }
